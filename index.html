@@ -1,0 +1,1494 @@
+<!DOCTYPE html>
+<html lang="en" class="dark">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>AI-Enabled Drone & Counter-Drone Threat Simulation Trainer</title>
+  
+  <!-- Tailwind CSS via CDN -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      darkMode: 'class',
+      theme: {
+        extend: {
+          colors: {
+            cyber: {
+              950: '#060a12',
+              900: '#0b1324',
+              850: '#0f172a',
+              800: '#131d31',
+              700: '#1e293b',
+              600: '#334155',
+              cyan: '#06b6d4',
+              sky: '#38bdf8',
+              emerald: '#10b981',
+              amber: '#f59e0b',
+              crimson: '#ef4444'
+            }
+          }
+        }
+      }
+    }
+  </script>
+
+  <!-- Google Fonts: Inter & JetBrains Mono -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
+
+  <!-- Custom Theme Styles -->
+  <link rel="stylesheet" href="css/styles.css">
+</head>
+<body class="bg-[#080d1a] text-slate-100 cyber-grid-bg min-h-screen flex flex-col selection:bg-cyan-500 selection:text-slate-900">
+
+  <!-- =========================================================================
+       NAVIGATION BAR
+       ========================================================================= -->
+  <header class="sticky top-0 z-40 bg-[#0b1324]/90 backdrop-blur-md border-b border-slate-800">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div class="flex items-center justify-between h-16">
+        
+        <!-- Brand / Title -->
+        <div class="flex items-center space-x-3 cursor-pointer" onclick="window.navigateTo('home')">
+          <div class="w-10 h-10 rounded-lg bg-gradient-to-br from-cyan-500 to-sky-700 p-0.5 shadow-lg shadow-cyan-500/20 flex items-center justify-center">
+            <div class="w-full h-full bg-slate-900 rounded-[7px] flex items-center justify-center">
+              <svg class="w-5 h-5 text-cyan-400" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5"/>
+              </svg>
+            </div>
+          </div>
+          <div>
+            <div class="flex items-center space-x-2">
+              <span class="text-xs font-mono font-bold tracking-widest text-cyan-400 uppercase">AERO-SHIELD AI</span>
+              <span class="text-[10px] px-1.5 py-0.2 rounded bg-cyan-950 text-cyan-300 border border-cyan-800/60 font-mono">SIMULATION</span>
+            </div>
+            <h1 class="text-sm sm:text-base font-bold text-slate-100 tracking-tight leading-none">
+              Drone & Counter-Drone Threat Trainer
+            </h1>
+          </div>
+        </div>
+
+        <!-- Desktop Navigation Links -->
+        <nav class="hidden lg:flex items-center space-x-1 text-sm font-medium">
+          <button data-tab-target="home" class="nav-link active px-3 py-2 text-sky-400 hover:text-sky-300">
+            Home Dashboard
+          </button>
+          <button data-tab-target="simulation" class="nav-link px-3 py-2 text-slate-300 hover:text-sky-400">
+            Threat Simulation
+          </button>
+          <button data-tab-target="analysis" class="nav-link px-3 py-2 text-slate-300 hover:text-sky-400">
+            AI Threat Analysis
+          </button>
+          <button data-tab-target="live" class="nav-link px-3 py-2 text-slate-300 hover:text-sky-400">
+            Live Radar & Grid
+          </button>
+          <button data-tab-target="reports" class="nav-link px-3 py-2 text-slate-300 hover:text-sky-400">
+            Reports
+          </button>
+          <button data-tab-target="about" class="nav-link px-3 py-2 text-slate-300 hover:text-sky-400">
+            About Project
+          </button>
+        </nav>
+
+        <!-- Right Side Utility Controls -->
+        <div class="hidden sm:flex items-center space-x-2">
+          <!-- Audio Toggle Button -->
+          <button id="sound-toggle-btn" class="flex items-center space-x-1.5 px-2.5 py-1.5 rounded-lg border border-slate-700 bg-slate-900/80 text-xs font-mono text-slate-400 hover:text-cyan-400 transition" title="Toggle Tactical Radar Audio">
+            <svg id="sound-icon" class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.536 8.464a5 5 0 010 7.072m2.828-9.9a9 9 0 010 12.728M5.586 15H4a1 1 0 01-1-1v-4a1 1 0 011-1h1.586l4.707-4.707C10.923 3.663 12 4.109 12 5v14c0 .891-1.077 1.337-1.707.707L5.586 15z"></path>
+            </svg>
+            <span id="sound-text">Sound: Off</span>
+          </button>
+
+          <!-- AI Mentor Chatbot Toggle -->
+          <button onclick="window.toggleAIMentor()" class="flex items-center space-x-1.5 px-2.5 py-1.5 rounded-lg border border-cyan-500/40 bg-cyan-950/40 text-xs font-mono text-cyan-300 hover:bg-cyan-900/60 transition shadow-sm shadow-cyan-500/10" title="Open AeroShield AI Mentor Chatbot">
+            <span class="w-2 h-2 rounded-full bg-cyan-400 animate-pulse"></span>
+            <span>AI Mentor</span>
+          </button>
+
+          <!-- AI Settings & Trainee Rank -->
+          <button onclick="window.openAISettingsModal()" class="flex items-center space-x-1.5 px-2.5 py-1.5 rounded-lg border border-slate-700 bg-slate-900/80 text-xs font-mono text-slate-300 hover:text-cyan-400 transition" title="AI Configuration & Trainee Profile">
+            <svg class="w-3.5 h-3.5 text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z"></path>
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path>
+            </svg>
+            <span id="header-trainee-rank" class="text-amber-400 font-bold">Lvl 2</span>
+          </button>
+
+          <!-- Quick Launch Simulation Button -->
+          <button onclick="window.navigateTo('live')" class="flex items-center space-x-1.5 px-3 py-1.5 rounded-lg bg-cyan-500 hover:bg-cyan-400 text-slate-950 font-bold text-xs transition shadow-md shadow-cyan-500/25">
+            <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M14.752 11.168l-3.197-2.132A1 1 0 0010 9.87v4.263a1 1 0 001.555.832l3.197-2.132a1 1 0 000-1.664z"></path>
+            </svg>
+            <span>Live Radar</span>
+          </button>
+        </div>
+
+        <!-- Mobile Menu Hamburger Button -->
+        <div class="lg:hidden flex items-center space-x-2">
+          <button id="mobile-menu-btn" class="p-2 rounded-lg bg-slate-900 border border-slate-700 text-slate-300 hover:text-white focus:outline-none">
+            <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"></path>
+            </svg>
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Mobile Dropdown Navigation -->
+    <div id="mobile-menu" class="hidden lg:hidden border-b border-slate-800 bg-slate-900/95 px-4 pt-2 pb-4 space-y-1">
+      <button data-tab-target="home" class="block w-full text-left px-3 py-2 rounded-md text-sm font-medium text-slate-200 hover:bg-slate-800">Home Dashboard</button>
+      <button data-tab-target="simulation" class="block w-full text-left px-3 py-2 rounded-md text-sm font-medium text-slate-200 hover:bg-slate-800">Threat Simulation</button>
+      <button data-tab-target="analysis" class="block w-full text-left px-3 py-2 rounded-md text-sm font-medium text-slate-200 hover:bg-slate-800">AI Threat Analysis</button>
+      <button data-tab-target="live" class="block w-full text-left px-3 py-2 rounded-md text-sm font-medium text-slate-200 hover:bg-slate-800">Live Radar & Grid</button>
+      <button data-tab-target="reports" class="block w-full text-left px-3 py-2 rounded-md text-sm font-medium text-slate-200 hover:bg-slate-800">Reports</button>
+      <button data-tab-target="about" class="block w-full text-left px-3 py-2 rounded-md text-sm font-medium text-slate-200 hover:bg-slate-800">About Project</button>
+    </div>
+  </header>
+
+  <!-- =========================================================================
+       MAIN CONTENT CONTAINER (SPA TAB PANES)
+       ========================================================================= -->
+  <main class="flex-grow max-w-7xl w-full mx-auto px-4 sm:px-6 lg:px-8 py-6">
+
+    <!-- =======================================================================
+         PAGE 1: HOME DASHBOARD
+         ======================================================================= -->
+    <section id="tab-home" class="tab-pane active space-y-8">
+      
+      <!-- Hero Banner -->
+      <div class="relative overflow-hidden rounded-2xl tactical-card border border-cyan-500/20 p-6 sm:p-10 bg-gradient-to-r from-[#0b1324] via-[#0f1d38] to-[#0b1324]">
+        <div class="absolute -top-24 -right-24 w-96 h-96 bg-cyan-500/10 rounded-full blur-3xl pointer-events-none"></div>
+        <div class="relative z-10 max-w-3xl">
+          <div class="inline-flex items-center space-x-2 px-3 py-1 rounded-full bg-cyan-950/80 border border-cyan-500/40 text-cyan-300 text-xs font-mono font-medium mb-4">
+            <span class="w-2 h-2 rounded-full bg-cyan-400 animate-ping"></span>
+            <span>ACADEMIC SIMULATION PLATFORM • NON-KINETIC DEFENSE</span>
+          </div>
+
+          <h1 class="text-3xl sm:text-4xl md:text-5xl font-extrabold text-white tracking-tight leading-tight">
+            AI-Enabled Drone & Counter-Drone Threat Simulation Trainer
+          </h1>
+
+          <p class="mt-4 text-base sm:text-lg text-slate-300 leading-relaxed">
+            A safe, educational simulation platform designed for aerospace security education, identifying, categorizing, and analysing simulated drone threats in real-time using Explainable AI (XAI) models.
+          </p>
+
+          <!-- Call to Action Buttons -->
+          <div class="mt-8 flex flex-wrap gap-4">
+            <button onclick="window.navigateTo('live')" class="px-6 py-3 rounded-lg bg-cyan-500 hover:bg-cyan-400 text-slate-950 font-bold text-sm tracking-wide shadow-lg shadow-cyan-500/30 transition transform hover:-translate-y-0.5 flex items-center space-x-2">
+              <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M14.752 11.168l-3.197-2.132A1 1 0 0010 9.87v4.263a1 1 0 001.555.832l3.197-2.132a1 1 0 000-1.664z"></path>
+              </svg>
+              <span>Start Simulation</span>
+            </button>
+
+            <button onclick="window.navigateTo('reports')" class="px-6 py-3 rounded-lg bg-slate-800 hover:bg-slate-700 text-slate-200 border border-slate-700 font-semibold text-sm transition flex items-center space-x-2">
+              <svg class="w-4 h-4 text-cyan-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 17v-2m3 2v-4m3 4v-6m2 10H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path>
+              </svg>
+              <span>View Reports</span>
+            </button>
+
+            <button onclick="window.navigateTo('about')" class="px-5 py-3 rounded-lg bg-transparent hover:bg-slate-800/50 text-slate-400 hover:text-slate-200 text-sm font-medium transition">
+              About Project & AI Engine &rarr;
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <!-- Live KPI / Mission Status Stat Grid -->
+      <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
+        <div class="tactical-card p-4">
+          <div class="text-xs font-mono text-slate-400 uppercase tracking-wider">Simulated Geofence</div>
+          <div class="text-2xl font-bold font-mono text-cyan-400 mt-1">3 Zones</div>
+          <div class="text-xs text-slate-500 mt-0.5">Core, Advisory, Buffer</div>
+        </div>
+
+        <div class="tactical-card p-4">
+          <div class="text-xs font-mono text-slate-400 uppercase tracking-wider">AI Inference Model</div>
+          <div class="text-2xl font-bold font-mono text-emerald-400 mt-1">97.4% mAP</div>
+          <div class="text-xs text-slate-500 mt-0.5">Fused CNN + LSTM Ensemble</div>
+        </div>
+
+        <div class="tactical-card p-4">
+          <div class="text-xs font-mono text-slate-400 uppercase tracking-wider">Evaluation Latency</div>
+          <div class="text-2xl font-bold font-mono text-sky-400 mt-1">~21 ms</div>
+          <div class="text-xs text-slate-500 mt-0.5">Real-time telemetry stream</div>
+        </div>
+
+        <div class="tactical-card p-4">
+          <div class="text-xs font-mono text-slate-400 uppercase tracking-wider">Safety Compliance</div>
+          <div class="text-2xl font-bold font-mono text-amber-400 mt-1">ICAO / Safe</div>
+          <div class="text-xs text-slate-500 mt-0.5">100% Non-Kinetic Advisory</div>
+        </div>
+      </div>
+
+      <!-- Simulation Pipeline Stages -->
+      <div class="space-y-4">
+        <div class="flex items-center justify-between">
+          <h2 class="text-lg font-bold text-slate-100 flex items-center space-x-2">
+            <span class="w-2.5 h-2.5 rounded-full bg-cyan-400"></span>
+            <span>Simulation & Threat Analysis Architecture</span>
+          </h2>
+          <span class="text-xs font-mono text-slate-500">SAFE EDUCATIONAL PIPELINE</span>
+        </div>
+
+        <div class="grid grid-cols-1 md:grid-cols-4 gap-4">
+          <!-- Step 1 -->
+          <div class="tactical-card p-5 relative">
+            <div class="text-2xl font-black font-mono text-cyan-500/30 mb-2">01</div>
+            <h3 class="text-sm font-bold text-slate-100 mb-1">Telemetry Ingestion</h3>
+            <p class="text-xs text-slate-400 leading-relaxed">
+              Streams simulated radar cross-section (RCS), GPS coordinates, altitude, speed, and RF radio spectrum signatures.
+            </p>
+          </div>
+
+          <!-- Step 2 -->
+          <div class="tactical-card p-5 relative">
+            <div class="text-2xl font-black font-mono text-cyan-500/30 mb-2">02</div>
+            <h3 class="text-sm font-bold text-slate-100 mb-1">Multi-Sensor Fusion</h3>
+            <p class="text-xs text-slate-400 leading-relaxed">
+              Synthesizes optical camera detections, acoustic frequency envelopes, and Remote ID transponder handshakes.
+            </p>
+          </div>
+
+          <!-- Step 3 -->
+          <div class="tactical-card p-5 relative">
+            <div class="text-2xl font-black font-mono text-cyan-500/30 mb-2">03</div>
+            <h3 class="text-sm font-bold text-slate-100 mb-1">Explainable AI Scoring</h3>
+            <p class="text-xs text-slate-400 leading-relaxed">
+              Calculates dynamic multi-factor risk scores (0-100) and extracts kinematic trajectory anomaly indicators.
+            </p>
+          </div>
+
+          <!-- Step 4 -->
+          <div class="tactical-card p-5 relative">
+            <div class="text-2xl font-black font-mono text-cyan-500/30 mb-2">04</div>
+            <h3 class="text-sm font-bold text-slate-100 mb-1">Safe Advisory Escalation</h3>
+            <p class="text-xs text-slate-400 leading-relaxed">
+              Issues non-kinetic procedural advisories: automated Air Traffic Control alerts, optical PTZ lock, and security notices.
+            </p>
+          </div>
+        </div>
+      </div>
+
+      <!-- Quick Launch Scenarios Grid -->
+      <div class="space-y-4">
+        <div class="flex items-center justify-between">
+          <div>
+            <h2 class="text-lg font-bold text-slate-100">Featured Simulation Scenarios</h2>
+            <p class="text-xs text-slate-400">Select any scenario to immediately load it into the Tactical Radar and AI Engine.</p>
+          </div>
+          <button onclick="window.navigateTo('simulation')" class="text-xs text-cyan-400 hover:text-cyan-300 font-mono">
+            View All Scenarios &rarr;
+          </button>
+        </div>
+
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+          <!-- Card 1 -->
+          <div onclick="window.selectScenario('restricted-area'); window.navigateTo('live');" class="tactical-card p-4 cursor-pointer hover:border-cyan-400 transition group">
+            <div class="flex items-center justify-between mb-2">
+              <span class="badge-high px-2 py-0.5 rounded text-[10px] font-semibold">HIGH THREAT</span>
+              <span class="text-[10px] font-mono text-slate-500">1 UAV</span>
+            </div>
+            <h4 class="text-sm font-bold text-slate-100 group-hover:text-cyan-300 transition">Restricted Airspace Breach</h4>
+            <p class="text-xs text-slate-400 mt-1 line-clamp-2">Fixed-wing Talon X penetrating 3km airport security buffer at 85 km/h.</p>
+          </div>
+
+          <!-- Card 2 -->
+          <div onclick="window.selectScenario('unknown-drone'); window.navigateTo('live');" class="tactical-card p-4 cursor-pointer hover:border-cyan-400 transition group">
+            <div class="flex items-center justify-between mb-2">
+              <span class="badge-moderate px-2 py-0.5 rounded text-[10px] font-semibold">MODERATE</span>
+              <span class="text-[10px] font-mono text-slate-500">1 UAV</span>
+            </div>
+            <h4 class="text-sm font-bold text-slate-100 group-hover:text-cyan-300 transition">Unknown Drone Detected</h4>
+            <p class="text-xs text-slate-400 mt-1 line-clamp-2">Unregistered commercial quadcopter hovering near peripheral boundary line.</p>
+          </div>
+
+          <!-- Card 3 -->
+          <div onclick="window.selectScenario('multiple-drones'); window.navigateTo('live');" class="tactical-card p-4 cursor-pointer hover:border-cyan-400 transition group">
+            <div class="flex items-center justify-between mb-2">
+              <span class="badge-critical px-2 py-0.5 rounded text-[10px] font-semibold">CRITICAL</span>
+              <span class="text-[10px] font-mono text-slate-500">3 UAVs</span>
+            </div>
+            <h4 class="text-sm font-bold text-slate-100 group-hover:text-cyan-300 transition">Coordinated Swarm Incursion</h4>
+            <p class="text-xs text-slate-400 mt-1 line-clamp-2">Synchronized multi-vector V-formation mesh approaching protected facility.</p>
+          </div>
+
+          <!-- Card 4 -->
+          <div onclick="window.selectScenario('suspicious-pattern'); window.navigateTo('live');" class="tactical-card p-4 cursor-pointer hover:border-cyan-400 transition group">
+            <div class="flex items-center justify-between mb-2">
+              <span class="badge-high px-2 py-0.5 rounded text-[10px] font-semibold">HIGH THREAT</span>
+              <span class="text-[10px] font-mono text-slate-500">1 UAV</span>
+            </div>
+            <h4 class="text-sm font-bold text-slate-100 group-hover:text-cyan-300 transition">Suspicious Flight Pattern</h4>
+            <p class="text-xs text-slate-400 mt-1 line-clamp-2">Zigzag reconnaissance sweeps and rapid altitude throttling.</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- Safety & Academic Notice Banner -->
+      <div class="p-4 rounded-xl bg-slate-900/80 border border-slate-800 text-xs text-slate-400 flex items-start space-x-3">
+        <svg class="w-5 h-5 text-cyan-400 flex-shrink-0 mt-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"></path>
+        </svg>
+        <div class="leading-relaxed">
+          <span class="text-slate-200 font-semibold">Strict Academic & Educational Safety Compliance:</span>
+          This software utilizes 100% simulated synthetic data models. It does not integrate with, control, or communicate with real drone hardware, nor does it provide instructions or capabilities for kinetic interception, RF jamming, or weaponization. Designed strictly for college viva, aerospace threat research, and cybersecurity education.
+        </div>
+      </div>
+
+    </section>
+
+    <!-- =======================================================================
+         PAGE 2: THREAT SIMULATION (SCENARIO SELECTION & TELEMETRY)
+         ======================================================================= -->
+    <section id="tab-simulation" class="tab-pane space-y-6">
+      
+      <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-slate-800 pb-4">
+        <div>
+          <h2 class="text-xl font-bold text-slate-100">Select Threat Scenario</h2>
+          <p class="text-xs text-slate-400">Choose from pre-configured airspace intrusion scenarios or build a custom simulated UAV.</p>
+        </div>
+        <div class="flex flex-wrap items-center gap-2">
+          <button onclick="window.openAIScenarioModal()" class="px-3.5 py-2 rounded-lg bg-cyan-950/80 hover:bg-cyan-900 text-cyan-300 border border-cyan-500/50 text-xs font-mono font-medium transition flex items-center space-x-1.5 shadow-md shadow-cyan-500/10">
+            <span class="w-2 h-2 rounded-full bg-cyan-400 animate-ping"></span>
+            <span>AI Scenario Generator</span>
+          </button>
+          <button onclick="window.openCustomScenarioModal()" class="px-3.5 py-2 rounded-lg bg-slate-800 hover:bg-slate-700 text-slate-300 border border-slate-700 text-xs font-mono font-medium transition flex items-center space-x-1.5">
+            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6"></path>
+            </svg>
+            <span>Manual Builder</span>
+          </button>
+          <button onclick="window.navigateTo('live')" class="px-4 py-2 rounded-lg bg-cyan-500 hover:bg-cyan-400 text-slate-950 font-bold text-xs transition">
+            Launch Radar View &rarr;
+          </button>
+        </div>
+      </div>
+
+      <!-- Scenario Cards Container (Rendered dynamically by JS) -->
+      <div id="scenario-cards-container" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
+        <!-- Rendered via renderScenarioCards() -->
+      </div>
+
+      <!-- Active Selected Drone Telemetry Card -->
+      <div class="tactical-card p-6 border-cyan-500/40">
+        <div class="flex items-center justify-between mb-4 border-b border-slate-800 pb-3">
+          <div class="flex items-center space-x-3">
+            <span class="w-3 h-3 rounded-full bg-cyan-400 animate-pulse"></span>
+            <h3 class="text-base font-bold text-slate-100">Simulated Drone Telemetry Stream</h3>
+          </div>
+          <div id="telemetry-threat-badge" class="px-3 py-1 rounded-full text-xs font-bold font-mono uppercase badge-high">
+            HIGH THREAT
+          </div>
+        </div>
+
+        <div class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-4 font-mono">
+          <div class="bg-slate-900/80 p-3 rounded-lg border border-slate-800">
+            <div class="text-[11px] text-slate-400 uppercase">Drone ID</div>
+            <div id="telemetry-drone-id" class="text-sm font-bold text-cyan-300 mt-1">UAV-INTRUDER-91</div>
+          </div>
+
+          <div class="bg-slate-900/80 p-3 rounded-lg border border-slate-800">
+            <div class="text-[11px] text-slate-400 uppercase">Speed</div>
+            <div id="telemetry-speed" class="text-sm font-bold text-slate-100 mt-1">84.5 km/h</div>
+          </div>
+
+          <div class="bg-slate-900/80 p-3 rounded-lg border border-slate-800">
+            <div class="text-[11px] text-slate-400 uppercase">Altitude</div>
+            <div id="telemetry-altitude" class="text-sm font-bold text-slate-100 mt-1">145 m AGL</div>
+          </div>
+
+          <div class="bg-slate-900/80 p-3 rounded-lg border border-slate-800">
+            <div class="text-[11px] text-slate-400 uppercase">Heading / Bearing</div>
+            <div id="telemetry-direction" class="text-sm font-bold text-amber-400 mt-1">135° SE</div>
+          </div>
+
+          <div class="bg-slate-900/80 p-3 rounded-lg border border-slate-800">
+            <div class="text-[11px] text-slate-400 uppercase">Radar RCS</div>
+            <div id="telemetry-rcs" class="text-sm font-bold text-slate-200 mt-1">0.12 m²</div>
+          </div>
+
+          <div class="bg-slate-900/80 p-3 rounded-lg border border-slate-800">
+            <div class="text-[11px] text-slate-400 uppercase">Transponder ID</div>
+            <div id="telemetry-remote-id" class="text-xs font-bold text-red-400 mt-1 truncate">DISABLED</div>
+          </div>
+        </div>
+
+        <div class="mt-4 pt-3 border-t border-slate-800/80 flex flex-col sm:flex-row sm:items-center justify-between text-xs font-mono text-slate-400 gap-2">
+          <div class="flex items-center space-x-2">
+            <span class="text-slate-500">Location Telemetry:</span>
+            <span id="telemetry-location" class="text-slate-200 font-semibold">[37.7749° N, -122.4194° W] • Sector North-West</span>
+          </div>
+          <div class="flex items-center space-x-2">
+            <span class="text-slate-500">RF Signal Link:</span>
+            <span id="telemetry-rf" class="text-cyan-400">5.8 GHz Encrypted</span>
+          </div>
+        </div>
+      </div>
+
+    </section>
+
+    <!-- =======================================================================
+         PAGE 3: AI THREAT ANALYSIS
+         ======================================================================= -->
+    <section id="tab-analysis" class="tab-pane space-y-6">
+      
+      <div class="border-b border-slate-800 pb-4 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+        <div>
+          <h2 class="text-xl font-bold text-slate-100 flex items-center space-x-2">
+            <svg class="w-5 h-5 text-cyan-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z"></path>
+            </svg>
+            <span>Explainable AI (XAI) Threat Analysis Engine</span>
+          </h2>
+          <p class="text-xs text-slate-400">Multi-criteria decision analysis evaluating kinematics, geofence breaches, RF emissions, and Remote ID compliance.</p>
+        </div>
+
+        <div class="flex items-center space-x-3 text-xs font-mono">
+          <span class="text-slate-500">Inference Latency:</span>
+          <span id="ai-inference-latency" class="text-emerald-400 font-bold">22.4 ms</span>
+        </div>
+      </div>
+
+      <!-- Core AI Verdict Cards -->
+      <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+        
+        <!-- Threat Classification Card -->
+        <div class="tactical-card p-6 flex flex-col justify-between">
+          <div>
+            <div class="flex items-center justify-between mb-2">
+              <span class="text-xs font-mono text-cyan-400 font-semibold uppercase">Classification Model</span>
+              <span id="ai-class-code" class="text-xs font-mono bg-cyan-950 px-2 py-0.5 rounded text-cyan-300 border border-cyan-800/60">UCA-77</span>
+            </div>
+            <h3 id="ai-classification" class="text-lg font-bold text-slate-100 mb-2">
+              Unauthorized Critical Airspace Incursion
+            </h3>
+            <p class="text-xs text-slate-400 leading-relaxed">
+              Target trajectory and signature match high-priority perimeter violation parameters with non-compliant transponder signature.
+            </p>
+          </div>
+
+          <div class="mt-4 pt-3 border-t border-slate-800 flex items-center justify-between text-xs font-mono">
+            <span class="text-slate-500">Model Confidence:</span>
+            <span class="text-emerald-400 font-bold">96.8%</span>
+          </div>
+        </div>
+
+        <!-- Risk Score Gauge Card -->
+        <div class="tactical-card p-6 flex flex-col justify-between">
+          <div>
+            <div class="flex items-center justify-between mb-2">
+              <span class="text-xs font-mono text-slate-400 uppercase font-semibold">Risk Index Assessment</span>
+              <span id="ai-risk-category-badge" class="px-2.5 py-0.5 rounded-full text-xs font-bold uppercase badge-high">
+                High Severity (84/100)
+              </span>
+            </div>
+            
+            <div class="flex items-baseline space-x-2 my-2">
+              <span id="ai-risk-score-val" class="text-5xl font-extrabold font-mono text-white">84</span>
+              <span class="text-sm font-mono text-slate-400">/ 100 Risk Score</span>
+            </div>
+
+            <!-- Risk Gauge Meter Bar -->
+            <div class="w-full bg-slate-800 rounded-full h-3 overflow-hidden mt-3">
+              <div id="ai-risk-gauge-bar" class="h-3 rounded-full bg-red-500 transition-all duration-500" style="width: 84%"></div>
+            </div>
+          </div>
+
+          <div class="mt-4 pt-3 border-t border-slate-800 flex justify-between text-[11px] font-mono text-slate-500">
+            <span>0: Safe</span>
+            <span>35: Moderate</span>
+            <span>60: High</span>
+            <span>80+: Critical</span>
+          </div>
+        </div>
+
+        <!-- Educational Safety Protocol Card -->
+        <div class="tactical-card p-6 flex flex-col justify-between border-emerald-500/30">
+          <div>
+            <div class="flex items-center justify-between mb-2">
+              <span class="text-xs font-mono text-emerald-400 uppercase font-semibold">Response Protocol</span>
+              <span class="text-[10px] font-mono bg-emerald-950 px-2 py-0.5 rounded text-emerald-300 border border-emerald-800">NON-KINETIC</span>
+            </div>
+            <h4 id="ai-protocol-badge" class="text-sm font-bold text-slate-100 mb-2">
+              LEVEL 3 - ELEVATED PERIMETER MONITORING
+            </h4>
+            <p class="text-xs text-slate-400 leading-relaxed">
+              In accordance with standard civilian airspace defense safety frameworks, all recommended actions are passive, regulatory, and coordinated with local civil aviation.
+            </p>
+          </div>
+
+          <div class="mt-4 pt-3 border-t border-slate-800 text-[11px] text-slate-500">
+            Zero kinetic or destructive interference executed.
+          </div>
+        </div>
+      </div>
+
+      <!-- Explainable AI (XAI) Reasons & Feature Importance -->
+      <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+        
+        <!-- Reasons for Classification -->
+        <div class="tactical-card p-6 space-y-4">
+          <div class="flex items-center justify-between border-b border-slate-800 pb-3">
+            <h3 class="text-sm font-bold text-slate-100 flex items-center space-x-2">
+              <span class="w-2 h-2 rounded-full bg-amber-400"></span>
+              <span>Why Was This Threat Classified?</span>
+            </h3>
+            <span class="text-xs font-mono text-slate-500">EXPLAINABLE LOGIC</span>
+          </div>
+
+          <div id="ai-reasons-container" class="space-y-3">
+            <!-- Rendered by performAIAnalysis() -->
+          </div>
+        </div>
+
+        <!-- Feature Importance Breakdown -->
+        <div class="tactical-card p-6 space-y-4">
+          <div class="flex items-center justify-between border-b border-slate-800 pb-3">
+            <h3 class="text-sm font-bold text-slate-100 flex items-center space-x-2">
+              <span class="w-2 h-2 rounded-full bg-cyan-400"></span>
+              <span>Multi-Sensor Feature Importance Weights</span>
+            </h3>
+            <span class="text-xs font-mono text-slate-500">NEURAL WEIGHTS</span>
+          </div>
+
+          <div id="ai-features-list" class="space-y-3.5">
+            <!-- Rendered by performAIAnalysis() -->
+          </div>
+        </div>
+      </div>
+
+      <!-- Counterfactual "What-If" Analysis (Module 5) -->
+      <div class="tactical-card p-6 border-cyan-500/30">
+        <div class="flex items-center justify-between border-b border-slate-800 pb-3 mb-4">
+          <div class="flex items-center space-x-2">
+            <svg class="w-5 h-5 text-cyan-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7h12m0 0l-4-4m4 4l-4 4m0 6H4m0 0l4 4m-4-4l4-4"></path>
+            </svg>
+            <h3 class="text-sm font-bold text-slate-100">Counterfactual XAI Reasoning ("What-If" Telemetry Sensitivity)</h3>
+          </div>
+          <span class="text-xs font-mono text-cyan-400">EXPLAINABLE AI</span>
+        </div>
+        <p class="text-xs text-slate-400 mb-3">
+          Simulated neural sensitivity testing reveals how target behavioral modifications would alter the threat risk classification:
+        </p>
+        <div id="ai-counterfactuals-container" class="space-y-2.5 font-mono text-xs">
+          <!-- Populated by performAIAnalysis() -->
+        </div>
+      </div>
+
+      <!-- Recommended Safe Response Details -->
+      <div class="tactical-card p-6 border-emerald-500/20">
+        <div class="flex items-center space-x-2 border-b border-slate-800 pb-3 mb-4">
+          <svg class="w-5 h-5 text-emerald-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"></path>
+          </svg>
+          <h3 class="text-sm font-bold text-slate-100">Recommended Safe Defensive Response Checklist</h3>
+        </div>
+
+        <ul id="ai-recommendations-list" class="space-y-3">
+          <!-- Populated by performAIAnalysis() -->
+        </ul>
+
+        <div class="mt-4 pt-3 border-t border-slate-800 text-xs text-slate-400 flex items-center space-x-2">
+          <svg class="w-4 h-4 text-cyan-400 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+          </svg>
+          <span>All recommendations adhere to safe non-kinetic situational awareness and lawful reporting protocols.</span>
+        </div>
+      </div>
+
+    </section>
+
+    <!-- =======================================================================
+         PAGE 4: LIVE SIMULATION DASHBOARD (RADAR & TACTICAL GRID)
+         ======================================================================= -->
+    <section id="tab-live" class="tab-pane space-y-6">
+      
+      <!-- Top Mission Bar -->
+      <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-slate-800 pb-4">
+        <div class="flex items-center space-x-3">
+          <div id="live-status-led" class="w-3 h-3 rounded-full bg-cyan-400"></div>
+          <div>
+            <div class="flex items-center space-x-2">
+              <span id="live-status-text" class="text-xs font-mono text-cyan-400 font-bold">STANDBY / READY</span>
+              <span class="text-slate-600 font-mono">•</span>
+              <span class="text-xs font-mono text-slate-400">Mission Clock: <span id="live-detection-time" class="text-slate-200">17:35:00</span></span>
+              <span class="text-slate-600 font-mono">•</span>
+              <span id="trainee-rank-indicator" class="px-2 py-0.5 rounded text-[10px] font-mono font-bold bg-amber-950/80 border border-amber-500/60 text-amber-300">
+                Operator (Lvl 2)
+              </span>
+            </div>
+            <h2 class="text-base sm:text-lg font-bold text-slate-100">Live Airspace Tactical Radar & Grid</h2>
+          </div>
+        </div>
+
+        <!-- Radar Display Filter Toggles -->
+        <div class="flex items-center space-x-2 text-xs font-mono">
+          <button id="toggle-radar-zones" class="px-2.5 py-1 rounded bg-slate-900 border border-slate-700 text-cyan-400 hover:border-cyan-400 transition">
+            Geofences
+          </button>
+          <button id="toggle-radar-trails" class="px-2.5 py-1 rounded bg-slate-900 border border-slate-700 text-cyan-400 hover:border-cyan-400 transition">
+            Motion Trails
+          </button>
+          <button id="toggle-radar-prediction" class="px-2.5 py-1 rounded bg-slate-900 border border-cyan-500/60 text-cyan-400 hover:border-cyan-400 transition" title="Toggle AI Trajectory Prediction Vector">
+            AI Prediction
+          </button>
+          <button id="toggle-radar-sweep" class="px-2.5 py-1 rounded bg-slate-900 border border-slate-700 text-cyan-400 hover:border-cyan-400 transition">
+            Sweep Beam
+          </button>
+        </div>
+      </div>
+
+      <!-- Multi-Target Swarm Selector (Visible when swarm scenario active) -->
+      <div id="drone-selector-chips"></div>
+
+      <!-- Main Live Simulation Center Layout -->
+      <div class="grid grid-cols-1 lg:grid-cols-12 gap-6 items-start">
+        
+        <!-- Left: Interactive Canvas Radar Display (7 cols) -->
+        <div class="lg:col-span-7 flex flex-col items-center">
+          <div class="w-full max-w-[560px] aspect-square relative rounded-full p-2 bg-slate-950/90 border-2 border-cyan-500/30 shadow-2xl shadow-cyan-500/10 flex items-center justify-center scanline-overlay">
+            <canvas id="tactical-radar-canvas" width="520" height="520" class="w-full h-full cursor-crosshair rounded-full"></canvas>
+          </div>
+
+          <!-- Radar Legend and Distance Markers -->
+          <div class="w-full max-w-[560px] mt-4 flex items-center justify-between text-[11px] font-mono text-slate-400 px-2">
+            <div class="flex items-center space-x-3">
+              <span class="flex items-center space-x-1">
+                <span class="w-2 h-2 rounded-full bg-red-500"></span>
+                <span>Core No-Fly (1km)</span>
+              </span>
+              <span class="flex items-center space-x-1">
+                <span class="w-2 h-2 rounded-full bg-amber-400"></span>
+                <span>Advisory Buffer (3km)</span>
+              </span>
+            </div>
+            <span class="text-slate-500">Click drone blip to lock telemetry</span>
+          </div>
+        </div>
+
+        <!-- Right: Real-time Telemetry, Controls & Event Stream (5 cols) -->
+        <div class="lg:col-span-5 space-y-4">
+          
+          <!-- Playback Controls Card -->
+          <div class="tactical-card p-5 space-y-3">
+            <div class="flex items-center justify-between">
+              <span class="text-xs font-mono text-slate-400 uppercase tracking-wider">Simulation Controller</span>
+              <div class="flex items-center space-x-1">
+                <span class="text-xs font-mono text-slate-400">Speed:</span>
+                <select id="sim-speed-select" class="bg-slate-900 border border-slate-700 text-xs font-mono text-cyan-300 rounded px-2 py-0.5 focus:outline-none">
+                  <option value="0.5">0.5x</option>
+                  <option value="1" selected>1.0x</option>
+                  <option value="2">2.0x</option>
+                  <option value="4">4.0x</option>
+                </select>
+              </div>
+            </div>
+
+            <!-- Progress Bar -->
+            <div class="space-y-1">
+              <div class="flex justify-between text-xs font-mono text-slate-400">
+                <span>Elapsed: <span id="sim-time-current" class="text-cyan-400">00:00</span></span>
+                <span>Total: <span id="sim-time-total" class="text-slate-500">01:00</span></span>
+              </div>
+              <div class="w-full bg-slate-800 rounded-full h-2 overflow-hidden">
+                <div id="sim-progress-bar" class="h-2 rounded-full bg-gradient-to-r from-cyan-500 to-sky-400 transition-all duration-150" style="width: 0%"></div>
+              </div>
+            </div>
+
+            <!-- Action Buttons -->
+            <div class="flex items-center space-x-2 pt-1">
+              <button id="btn-sim-play" class="flex-1 py-2 px-3 rounded-lg bg-cyan-500 hover:bg-cyan-400 text-slate-950 font-bold text-xs flex items-center justify-center space-x-1.5 transition">
+                <svg id="sim-play-icon" class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14.752 11.168l-3.197-2.132A1 1 0 0010 9.87v4.263a1 1 0 001.555.832l3.197-2.132a1 1 0 000-1.664z"></path>
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                </svg>
+                <span>Play / Pause</span>
+              </button>
+
+              <button id="btn-sim-reset" class="py-2 px-3 rounded-lg bg-slate-800 hover:bg-slate-700 text-slate-300 font-medium text-xs flex items-center justify-center space-x-1 border border-slate-700 transition" title="Reset Timeline (R)">
+                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"></path>
+                </svg>
+                <span>Reset</span>
+              </button>
+            </div>
+            <div class="text-[10px] text-slate-500 text-center font-mono">
+              Press [Space] to toggle • [R] to reset
+            </div>
+          </div>
+
+          <!-- Trainee Defensive Action Console (Modules 7 & 8) -->
+          <div class="tactical-card p-4 space-y-3 border-emerald-500/40 bg-gradient-to-br from-slate-900/90 to-emerald-950/20">
+            <div class="flex items-center justify-between border-b border-slate-800 pb-2">
+              <div class="flex items-center space-x-2">
+                <span class="w-2.5 h-2.5 rounded-full bg-emerald-400 animate-pulse"></span>
+                <span class="text-xs font-mono text-emerald-400 font-bold uppercase tracking-wider">Trainee Defense Console</span>
+              </div>
+              <div class="text-[10px] font-mono text-slate-400">
+                Dispatched: <span id="trainee-action-count" class="text-emerald-400 font-bold">0</span>/4
+              </div>
+            </div>
+
+            <p class="text-[11px] text-slate-400 leading-relaxed">
+              Target detected! Execute compliant non-kinetic defense protocols to mitigate threat:
+            </p>
+
+            <div class="grid grid-cols-2 gap-2 text-xs font-mono">
+              <button id="btn-action-atc" onclick="window.dispatchTraineeAction('ATC_ALERT', 'Broadcast ATC Safety NOTAM')" class="trainee-action-btn p-2 rounded bg-slate-900/90 border border-slate-700 hover:border-cyan-400 text-slate-200 text-left transition">
+                <div class="text-[10px] text-cyan-400 font-bold flex items-center space-x-1">
+                  <span>01 • ATC ALERT</span>
+                </div>
+                <div class="text-[11px] text-slate-300 mt-0.5">Broadcast NOTAM Alert</div>
+              </button>
+
+              <button id="btn-action-ptz" onclick="window.dispatchTraineeAction('PTZ_LOCK', 'Slew PTZ Optical Camera')" class="trainee-action-btn p-2 rounded bg-slate-900/90 border border-slate-700 hover:border-emerald-400 text-slate-200 text-left transition">
+                <div class="text-[10px] text-emerald-400 font-bold flex items-center space-x-1">
+                  <span>02 • PTZ CAMERA</span>
+                </div>
+                <div class="text-[11px] text-slate-300 mt-0.5">Slew PTZ Optical Lock</div>
+              </button>
+
+              <button id="btn-action-rid" onclick="window.dispatchTraineeAction('INTERROGATE', 'Interrogate Remote ID')" class="trainee-action-btn p-2 rounded bg-slate-900/90 border border-slate-700 hover:border-amber-400 text-slate-200 text-left transition">
+                <div class="text-[10px] text-amber-400 font-bold flex items-center space-x-1">
+                  <span>03 • REMOTE ID</span>
+                </div>
+                <div class="text-[11px] text-slate-300 mt-0.5">Interrogate Transponder</div>
+              </button>
+
+              <button id="btn-action-patrol" onclick="window.dispatchTraineeAction('DISPATCH_PATROL', 'Alert Facility Ground Patrol')" class="trainee-action-btn p-2 rounded bg-slate-900/90 border border-slate-700 hover:border-purple-400 text-slate-200 text-left transition">
+                <div class="text-[10px] text-purple-400 font-bold flex items-center space-x-1">
+                  <span>04 • GROUND OBSERVER</span>
+                </div>
+                <div class="text-[11px] text-slate-300 mt-0.5">Alert Security Patrol</div>
+              </button>
+            </div>
+          </div>
+
+          <!-- Live Active Target Telemetry HUD -->
+          <div class="tactical-card p-4 space-y-2 border-cyan-500/30">
+            <div class="flex items-center justify-between border-b border-slate-800 pb-2">
+              <span class="text-xs font-mono text-cyan-400 uppercase tracking-wider flex items-center space-x-1.5">
+                <span class="w-2 h-2 rounded-full bg-cyan-400 animate-ping"></span>
+                <span>Target Telemetry HUD</span>
+              </span>
+              <span id="live-hud-threat" class="badge-high px-2 py-0.5 rounded text-[10px] font-mono font-bold uppercase">
+                HIGH
+              </span>
+            </div>
+
+            <div class="grid grid-cols-3 gap-2 font-mono text-xs pt-1">
+              <div class="bg-slate-900/80 p-2 rounded border border-slate-800">
+                <div class="text-[10px] text-slate-500 uppercase">Target ID</div>
+                <div id="live-hud-drone-id" class="font-bold text-cyan-300 truncate mt-0.5">DRONE-01</div>
+              </div>
+              <div class="bg-slate-900/80 p-2 rounded border border-slate-800">
+                <div class="text-[10px] text-slate-500 uppercase">Speed</div>
+                <div id="live-hud-speed" class="font-bold text-slate-100 mt-0.5">85 km/h</div>
+              </div>
+              <div class="bg-slate-900/80 p-2 rounded border border-slate-800">
+                <div class="text-[10px] text-slate-500 uppercase">Altitude</div>
+                <div id="live-hud-altitude" class="font-bold text-slate-100 mt-0.5">145 m</div>
+              </div>
+              <div class="bg-slate-900/80 p-2 rounded border border-slate-800">
+                <div class="text-[10px] text-slate-500 uppercase">Heading</div>
+                <div id="live-hud-heading" class="font-bold text-amber-400 mt-0.5">135° SE</div>
+              </div>
+              <div class="bg-slate-900/80 p-2 rounded border border-slate-800">
+                <div class="text-[10px] text-slate-500 uppercase">Base Dist</div>
+                <div id="live-hud-distance" class="font-bold text-sky-400 mt-0.5">2.4 km</div>
+              </div>
+              <div class="bg-slate-900/80 p-2 rounded border border-slate-800">
+                <div class="text-[10px] text-slate-500 uppercase">AI Risk</div>
+                <div id="live-hud-risk" class="font-bold text-red-400 mt-0.5">84/100</div>
+              </div>
+            </div>
+
+            <!-- Predicted Breach & Trainee Latency Indicator (Module 3 & 7) -->
+            <div class="pt-2 border-t border-slate-800 flex items-center justify-between text-[11px] font-mono">
+              <div class="flex items-center space-x-1.5">
+                <span class="text-slate-500">Predicted Breach:</span>
+                <span id="live-hud-etb" class="text-amber-400 font-bold">ETB Core ~18s (88%)</span>
+              </div>
+              <div class="flex items-center space-x-1.5">
+                <span class="text-slate-500">Latency:</span>
+                <span id="live-hud-latency" class="text-cyan-400 font-bold">0.0s</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- Live Event Log / Alert Feed -->
+          <div class="tactical-card p-4 space-y-2">
+            <div class="flex items-center justify-between border-b border-slate-800 pb-2">
+              <span class="text-xs font-mono text-cyan-400 uppercase tracking-wider flex items-center space-x-1.5">
+                <span class="w-2 h-2 rounded-full bg-cyan-400 animate-pulse"></span>
+                <span>Tactical Event Feed</span>
+              </span>
+              <span class="text-[10px] font-mono text-slate-500">REAL-TIME TELEMETRY</span>
+            </div>
+
+            <div id="live-event-feed" class="max-h-56 overflow-y-auto space-y-1.5 pr-1 font-mono text-xs">
+              <!-- Rendered dynamically by logEvent() -->
+            </div>
+          </div>
+
+          <!-- Quick Jump to Detailed Analysis CTA -->
+          <div class="p-3.5 rounded-lg bg-gradient-to-r from-slate-900 to-cyan-950/60 border border-cyan-800/40 flex items-center justify-between">
+            <div>
+              <div class="text-xs font-bold text-slate-100">Need in-depth AI explainability?</div>
+              <div class="text-[11px] text-slate-400">View neural weights & safe response checklist.</div>
+            </div>
+            <button onclick="window.navigateTo('analysis')" class="px-3 py-1.5 rounded bg-cyan-500/20 hover:bg-cyan-500/30 text-cyan-300 border border-cyan-500/40 text-xs font-mono font-medium transition">
+              AI Analysis &rarr;
+            </button>
+          </div>
+
+        </div>
+      </div>
+
+    </section>
+
+    <!-- =======================================================================
+         PAGE 5: REPORTS & HISTORICAL SIMULATIONS
+         ======================================================================= -->
+    <section id="tab-reports" class="tab-pane space-y-6">
+      
+      <div class="border-b border-slate-800 pb-4 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+        <div>
+          <h2 class="text-xl font-bold text-slate-100">Simulation Incident Reports</h2>
+          <p class="text-xs text-slate-400">Historical records of simulated aerial threats, AI assessments, risk scores, and safe responses executed.</p>
+        </div>
+
+        <!-- Export Buttons -->
+        <div class="flex flex-wrap items-center gap-2">
+          <button onclick="window.reportManager.exportCSV()" class="px-3 py-1.5 rounded-lg bg-slate-800 hover:bg-slate-700 text-slate-200 border border-slate-700 text-xs font-mono font-medium transition flex items-center space-x-1.5">
+            <svg class="w-3.5 h-3.5 text-cyan-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"></path>
+            </svg>
+            <span>Export CSV</span>
+          </button>
+
+          <button onclick="window.reportManager.exportJSON()" class="px-3 py-1.5 rounded-lg bg-slate-800 hover:bg-slate-700 text-slate-200 border border-slate-700 text-xs font-mono font-medium transition flex items-center space-x-1.5">
+            <svg class="w-3.5 h-3.5 text-sky-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 20l4-16m4 4l4 4-4 4M6 16l-4-4 4-4"></path>
+            </svg>
+            <span>Export JSON</span>
+          </button>
+
+          <button onclick="window.reportManager.printReportSummary()" class="px-3 py-1.5 rounded-lg bg-cyan-950 hover:bg-cyan-900 text-cyan-300 border border-cyan-800/80 text-xs font-mono font-medium transition flex items-center space-x-1.5">
+            <svg class="w-3.5 h-3.5 text-cyan-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 17h2a2 2 0 002-2v-4a2 2 0 00-2-2H5a2 2 0 00-2 2v4a2 2 0 002 2h2m2 4h6a2 2 0 002-2v-4a2 2 0 00-2-2H9a2 2 0 00-2 2v4a2 2 0 002 2zm8-12V5a2 2 0 00-2-2H9a2 2 0 00-2 2v4h10z"></path>
+            </svg>
+            <span>Print Report</span>
+          </button>
+        </div>
+      </div>
+
+      <!-- Filter & Search Bar -->
+      <div class="tactical-card p-4 flex flex-col sm:flex-row items-center justify-between gap-3">
+        <div class="flex items-center space-x-3 w-full sm:w-auto">
+          <label class="text-xs font-mono text-slate-400 uppercase">Threat Filter:</label>
+          <select id="reports-filter-select" class="bg-slate-900 border border-slate-700 text-xs text-slate-200 rounded-lg px-3 py-1.5 focus:outline-none focus:border-cyan-400 font-mono">
+            <option value="all">All Threat Levels</option>
+            <option value="Critical">Critical</option>
+            <option value="High">High</option>
+            <option value="Moderate">Moderate</option>
+            <option value="Low">Low</option>
+          </select>
+        </div>
+
+        <div class="flex items-center space-x-3 w-full sm:w-auto">
+          <div class="relative flex-1 sm:w-64">
+            <input id="reports-search-input" type="text" placeholder="Search by ID, scenario, or drone..." class="w-full bg-slate-900 border border-slate-700 text-xs text-slate-200 rounded-lg pl-8 pr-3 py-1.5 focus:outline-none focus:border-cyan-400 font-mono">
+            <svg class="w-3.5 h-3.5 text-slate-500 absolute left-2.5 top-2.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path>
+            </svg>
+          </div>
+
+          <button id="reports-view-toggle" class="px-3 py-1.5 rounded-lg bg-slate-800 text-xs font-mono text-slate-300 hover:text-white border border-slate-700">
+            View as Cards
+          </button>
+        </div>
+      </div>
+
+      <!-- Reports Render Target (Cards or Table) -->
+      <div id="reports-display-container" class="tactical-card p-2 sm:p-4">
+        <!-- Rendered by reportManager.render() -->
+      </div>
+
+    </section>
+
+    <!-- =======================================================================
+         PAGE 6: ABOUT PROJECT & METHODOLOGY
+         ======================================================================= -->
+    <section id="tab-about" class="tab-pane space-y-8">
+      
+      <!-- Academic Presentation Header -->
+      <div class="border-b border-slate-800 pb-4">
+        <div class="inline-flex items-center space-x-2 px-2.5 py-0.5 rounded bg-cyan-950 text-cyan-300 text-xs font-mono font-medium mb-2 border border-cyan-800/60">
+          <span>PROJECT DOCUMENTATION & METHODOLOGY</span>
+        </div>
+        <h2 class="text-2xl font-bold text-slate-100">About the Threat Simulation Trainer</h2>
+        <p class="text-sm text-slate-400 mt-1 max-w-3xl leading-relaxed">
+          Comprehensive explanation of the platform's purpose, Explainable AI architecture, multi-sensor threat detection taxonomy, and academic implementation.
+        </p>
+      </div>
+
+      <!-- Grid of Concept Explanations -->
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+        
+        <!-- Purpose of Project -->
+        <div class="tactical-card p-6 space-y-3">
+          <h3 class="text-base font-bold text-cyan-300 flex items-center space-x-2">
+            <svg class="w-5 h-5 text-cyan-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"></path>
+            </svg>
+            <span>Project Purpose & Vision</span>
+          </h3>
+          <p class="text-xs text-slate-300 leading-relaxed">
+            The proliferation of commercial and ad-hoc unmanned aerial vehicles (UAVs) introduces significant security challenges for civil infrastructure, airports, and restricted facilities.
+          </p>
+          <p class="text-xs text-slate-400 leading-relaxed">
+            This project provides an interactive, safe, educational training environment for students, aerospace researchers, and security analysts to evaluate how AI algorithms detect and classify drone incursions without physical risks.
+          </p>
+        </div>
+
+        <!-- How AI is Used for Threat Identification -->
+        <div class="tactical-card p-6 space-y-3">
+          <h3 class="text-base font-bold text-cyan-300 flex items-center space-x-2">
+            <svg class="w-5 h-5 text-cyan-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.75 17L9 20l-1 1h8l-1-1-.75-3M3 13h18M5 17h14a2 2 0 002-2V5a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"></path>
+            </svg>
+            <span>How AI Analyzes Aerial Threats</span>
+          </h3>
+          <p class="text-xs text-slate-300 leading-relaxed">
+            The simulated AI Threat Engine employs an ensemble multi-sensor fusion model inspired by real-world Counter-UAS (C-UAS) systems:
+          </p>
+          <ul class="text-xs text-slate-400 space-y-1.5 list-disc list-inside">
+            <li><strong>Kinematic Anomaly Detection:</strong> Evaluates trajectory derivatives, speed variations, and rapid descent profiles.</li>
+            <li><strong>Geofence Spatial Indexing:</strong> Continuous point-in-polygon and Euclidean distance calculations relative to protected assets.</li>
+            <li><strong>Digital Remote ID Verification:</strong> Validates FAA/ICAO cryptographic broadcast transponders against safe civil manifests.</li>
+            <li><strong>RF Spectrum Signature Analysis:</strong> Detects frequency-hopping (FHSS) and high-bandwidth encrypted command downlinks.</li>
+          </ul>
+        </div>
+
+        <!-- Safe Defensive Response Taxonomy -->
+        <div class="tactical-card p-6 space-y-3">
+          <h3 class="text-base font-bold text-emerald-400 flex items-center space-x-2">
+            <svg class="w-5 h-5 text-emerald-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"></path>
+            </svg>
+            <span>Safe & Non-Kinetic Counter-Drone Framework</span>
+          </h3>
+          <p class="text-xs text-slate-300 leading-relaxed">
+            In compliance with civil aviation regulations and safety ethics, all recommended counter-drone actions are defensive and non-destructive:
+          </p>
+          <div class="space-y-1.5 text-xs text-slate-400">
+            <div class="p-2 rounded bg-slate-900/60 border border-slate-800">
+              <span class="text-cyan-400 font-semibold">1. Passive Optical Verification:</span> Steer PTZ cameras to record high-resolution payload evidence.
+            </div>
+            <div class="p-2 rounded bg-slate-900/60 border border-slate-800">
+              <span class="text-cyan-400 font-semibold">2. Air Traffic Coordination:</span> Broadcast automated safety NOTAMs to civil ATC towers.
+            </div>
+            <div class="p-2 rounded bg-slate-900/60 border border-slate-800">
+              <span class="text-cyan-400 font-semibold">3. Security Dispatch:</span> Alert perimeter response officers with precise GPS coordinates.
+            </div>
+          </div>
+        </div>
+
+        <!-- Technical Implementation & Academic Viva Guide -->
+        <div class="tactical-card p-6 space-y-3">
+          <h3 class="text-base font-bold text-amber-400 flex items-center space-x-2">
+            <svg class="w-5 h-5 text-amber-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253"></path>
+            </svg>
+            <span>Technical Stack & Deployment</span>
+          </h3>
+          <p class="text-xs text-slate-300 leading-relaxed">
+            Constructed with modern, lightweight web technologies engineered for zero-dependency client-side execution:
+          </p>
+          <ul class="text-xs text-slate-400 space-y-1.5 font-mono">
+            <li>• <strong class="text-slate-200">Frontend:</strong> HTML5 Semantic Canvas, Tailwind CSS, Vanilla ES6+ JavaScript.</li>
+            <li>• <strong class="text-slate-200">Synthesizer:</strong> Web Audio API (real-time procedural radar acoustics).</li>
+            <li>• <strong class="text-slate-200">Deployment:</strong> 100% static hosting on <strong>GitHub Pages</strong>.</li>
+            <li>• <strong class="text-slate-200">Persistence:</strong> HTML5 Web Storage API for incident report history.</li>
+          </ul>
+        </div>
+      </div>
+
+      <!-- College Project Metadata Box -->
+      <div class="tactical-card p-6 bg-gradient-to-r from-slate-900 to-slate-900/60 border-slate-700">
+        <h4 class="text-xs font-mono uppercase tracking-wider text-cyan-400 mb-3 font-semibold">
+          College Project Demonstration Metadata
+        </h4>
+        <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-4 text-xs font-mono">
+          <div>
+            <div class="text-slate-500">Subject / Course:</div>
+            <div class="text-slate-200 font-bold mt-0.5">Artificial Intelligence & Aerospace Defense</div>
+          </div>
+          <div>
+            <div class="text-slate-500">Project Type:</div>
+            <div class="text-slate-200 font-bold mt-0.5">C-UAS Threat Simulation Platform</div>
+          </div>
+          <div>
+            <div class="text-slate-500">Environment:</div>
+            <div class="text-cyan-400 font-bold mt-0.5">GitHub Pages Ready (Static Web)</div>
+          </div>
+          <div>
+            <div class="text-slate-500">Ethical Status:</div>
+            <div class="text-emerald-400 font-bold mt-0.5">Safe / Non-Kinetic / Educational</div>
+          </div>
+        </div>
+      </div>
+
+    </section>
+
+  </main>
+
+  <!-- =========================================================================
+       MODAL: CUSTOM SCENARIO BUILDER
+       ========================================================================= -->
+  <div id="custom-scenario-modal" class="fixed inset-0 z-50 hidden items-center justify-center bg-black/80 backdrop-blur-sm p-4">
+    <div class="tactical-card max-w-lg w-full p-6 border-cyan-500/50 shadow-2xl space-y-4">
+      <div class="flex items-center justify-between border-b border-slate-800 pb-3">
+        <div class="flex items-center space-x-2">
+          <span class="w-2.5 h-2.5 rounded-full bg-cyan-400"></span>
+          <h3 class="text-base font-bold text-slate-100">Create Custom Threat Scenario</h3>
+        </div>
+        <button onclick="window.closeCustomScenarioModal()" class="text-slate-400 hover:text-white">
+          <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
+          </svg>
+        </button>
+      </div>
+
+      <form id="custom-scenario-form" class="space-y-3 text-xs font-mono">
+        <div>
+          <label class="block text-slate-400 mb-1">Scenario Title</label>
+          <input name="title" required placeholder="e.g. Low-Altitude Drone Infiltration" class="w-full bg-slate-900 border border-slate-700 rounded p-2 text-slate-200 focus:outline-none focus:border-cyan-400">
+        </div>
+
+        <div class="grid grid-cols-2 gap-3">
+          <div>
+            <label class="block text-slate-400 mb-1">Drone ID</label>
+            <input name="droneId" value="TEST-UAV-X" required class="w-full bg-slate-900 border border-slate-700 rounded p-2 text-slate-200 focus:outline-none focus:border-cyan-400">
+          </div>
+          <div>
+            <label class="block text-slate-400 mb-1">Airframe Type</label>
+            <select name="droneType" class="w-full bg-slate-900 border border-slate-700 rounded p-2 text-slate-200 focus:outline-none focus:border-cyan-400">
+              <option value="Quadcopter">Commercial Quadcopter</option>
+              <option value="Fixed-Wing UAV">Fixed-Wing UAV</option>
+              <option value="Hexacopter Heavy">Heavy Hexacopter</option>
+              <option value="Micro-FPV">Micro-FPV Racer</option>
+            </select>
+          </div>
+        </div>
+
+        <div class="grid grid-cols-3 gap-3">
+          <div>
+            <label class="block text-slate-400 mb-1">Speed (km/h)</label>
+            <input type="number" name="speed" value="70" min="5" max="180" class="w-full bg-slate-900 border border-slate-700 rounded p-2 text-slate-200 focus:outline-none focus:border-cyan-400">
+          </div>
+          <div>
+            <label class="block text-slate-400 mb-1">Altitude (m)</label>
+            <input type="number" name="altitude" value="95" min="10" max="800" class="w-full bg-slate-900 border border-slate-700 rounded p-2 text-slate-200 focus:outline-none focus:border-cyan-400">
+          </div>
+          <div>
+            <label class="block text-slate-400 mb-1">Heading (°)</label>
+            <input type="number" name="heading" value="120" min="0" max="360" class="w-full bg-slate-900 border border-slate-700 rounded p-2 text-slate-200 focus:outline-none focus:border-cyan-400">
+          </div>
+        </div>
+
+        <div class="grid grid-cols-2 gap-3">
+          <div>
+            <label class="block text-slate-400 mb-1">Threat Level</label>
+            <select name="threatLevel" class="w-full bg-slate-900 border border-slate-700 rounded p-2 text-slate-200 focus:outline-none focus:border-cyan-400">
+              <option value="Critical">Critical</option>
+              <option value="High" selected>High</option>
+              <option value="Moderate">Moderate</option>
+              <option value="Low">Low</option>
+            </select>
+          </div>
+          <div>
+            <label class="block text-slate-400 mb-1">Flight Pattern</label>
+            <select name="pattern" class="w-full bg-slate-900 border border-slate-700 rounded p-2 text-slate-200 focus:outline-none focus:border-cyan-400">
+              <option value="direct_incursion">Direct Incursion</option>
+              <option value="zigzag_evasion">Zigzag Evasive</option>
+              <option value="hover_loiter">Hover / Loiter</option>
+            </select>
+          </div>
+        </div>
+
+        <div>
+          <label class="block text-slate-400 mb-1">RF Telemetry / Protocol</label>
+          <input name="rf" value="5.8 GHz Encrypted / FHSS" class="w-full bg-slate-900 border border-slate-700 rounded p-2 text-slate-200 focus:outline-none focus:border-cyan-400">
+        </div>
+
+        <div class="flex items-center justify-end space-x-2 pt-2 border-t border-slate-800">
+          <button type="button" onclick="window.closeCustomScenarioModal()" class="px-4 py-2 rounded bg-slate-800 hover:bg-slate-700 text-slate-300 font-medium transition">
+            Cancel
+          </button>
+          <button type="submit" class="px-4 py-2 rounded bg-cyan-500 hover:bg-cyan-400 text-slate-950 font-bold transition">
+            Generate & Launch
+          </button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- =========================================================================
+       MODAL: REPORT DETAIL MODAL
+       ========================================================================= -->
+  <div id="report-detail-modal" class="fixed inset-0 z-50 hidden items-center justify-center bg-black/80 backdrop-blur-sm p-4">
+    <div class="tactical-card max-w-xl w-full p-6 border-cyan-500/40 shadow-2xl space-y-4">
+      <div id="report-modal-content">
+        <!-- Rendered by window.reportManager.showReportModal() -->
+      </div>
+      <div class="flex justify-end pt-2 border-t border-slate-800">
+        <button onclick="window.reportManager.closeModal()" class="px-4 py-2 rounded bg-slate-800 hover:bg-slate-700 text-slate-300 text-xs font-mono font-medium transition">
+          Close Window
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- =========================================================================
+       MODAL: AI SCENARIO GENERATOR MODAL (Module 1 & 10)
+       ========================================================================= -->
+  <div id="ai-scenario-generator-modal" class="fixed inset-0 z-50 hidden items-center justify-center bg-black/80 backdrop-blur-sm p-4">
+    <div class="tactical-card max-w-lg w-full p-6 border-cyan-500/50 shadow-2xl space-y-4">
+      <div class="flex items-center justify-between border-b border-slate-800 pb-3">
+        <div class="flex items-center space-x-2">
+          <span class="w-2.5 h-2.5 rounded-full bg-cyan-400 animate-ping"></span>
+          <h3 class="text-base font-bold text-slate-100">AI Threat Scenario Generator</h3>
+        </div>
+        <button onclick="window.closeAIScenarioModal()" class="text-slate-400 hover:text-white">
+          <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
+          </svg>
+        </button>
+      </div>
+
+      <p class="text-xs text-slate-400 leading-relaxed">
+        Specify a training objective or incursion premise. The AI will synthesize realistic multi-sensor telemetry, evasive waypoints, and airspace threats.
+      </p>
+
+      <form id="ai-scenario-generator-form" class="space-y-3.5 text-xs font-mono">
+        <div>
+          <label class="block text-slate-400 mb-1">Scenario Prompt / Training Objective</label>
+          <textarea id="ai-gen-prompt" rows="3" placeholder="e.g., Unidentified stealth quadcopter hovering near the fuel depot while broadcasting corrupted remote ID packets..." class="w-full bg-slate-900 border border-slate-700 rounded p-2.5 text-slate-200 focus:outline-none focus:border-cyan-400 leading-relaxed"></textarea>
+        </div>
+
+        <div class="grid grid-cols-2 gap-3">
+          <div>
+            <label class="block text-slate-400 mb-1">Difficulty Tier</label>
+            <select id="ai-gen-difficulty" class="w-full bg-slate-900 border border-slate-700 rounded p-2 text-slate-200 focus:outline-none focus:border-cyan-400">
+              <option value="Critical Threat">Critical Threat (Swarm/High Speed)</option>
+              <option value="High Risk" selected>High Risk (Perimeter Incursion)</option>
+              <option value="Moderate Risk">Moderate Risk (Loitering Recon)</option>
+              <option value="Low / Safe">Low / Authorized (Compliance Check)</option>
+            </select>
+          </div>
+          <div>
+            <label class="block text-slate-400 mb-1">Mission Category</label>
+            <select id="ai-gen-category" class="w-full bg-slate-900 border border-slate-700 rounded p-2 text-slate-200 focus:outline-none focus:border-cyan-400">
+              <option value="Perimeter Incursion">Perimeter Incursion</option>
+              <option value="Swarm / Multi-Vector">Swarm / Multi-Vector</option>
+              <option value="Targeted Surveillance">Targeted Surveillance</option>
+              <option value="Electronic Transponder Anomaly">Transponder Anomaly</option>
+            </select>
+          </div>
+        </div>
+
+        <div>
+          <div class="flex justify-between text-slate-400 mb-1">
+            <span>Drone Contacts Count:</span>
+            <span id="ai-gen-drone-count-label" class="text-cyan-400 font-bold">1 Contact</span>
+          </div>
+          <input type="range" id="ai-gen-drone-count" min="1" max="3" value="1" class="w-full">
+        </div>
+
+        <div class="flex items-center justify-between pt-2 border-t border-slate-800">
+          <span id="ai-gen-mode-badge" class="text-[10px] text-cyan-400">Engine: Dual-Mode (Offline + Gemini)</span>
+          <div class="flex items-center space-x-2">
+            <button type="button" onclick="window.closeAIScenarioModal()" class="px-4 py-2 rounded bg-slate-800 hover:bg-slate-700 text-slate-300 font-medium transition">
+              Cancel
+            </button>
+            <button type="submit" id="btn-ai-gen-submit" class="px-4 py-2 rounded bg-cyan-500 hover:bg-cyan-400 text-slate-950 font-bold transition flex items-center space-x-1.5">
+              <span>Synthesize & Launch</span>
+            </button>
+          </div>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- =========================================================================
+       MODAL: POST-MISSION AI DEBRIEF & AFTER-ACTION REVIEW (Modules 7, 8, 10)
+       ========================================================================= -->
+  <div id="ai-debrief-modal" class="fixed inset-0 z-50 hidden items-center justify-center bg-black/85 backdrop-blur-md p-4">
+    <div class="tactical-card max-w-2xl w-full p-6 border-cyan-500/50 shadow-2xl space-y-4 max-h-[90vh] overflow-y-auto">
+      <div class="flex items-start justify-between border-b border-slate-800 pb-3">
+        <div>
+          <div class="inline-flex items-center space-x-2 px-2.5 py-0.5 rounded bg-cyan-950 text-cyan-300 text-[10px] font-mono border border-cyan-800/80 mb-1">
+            <span>AFTER-ACTION REVIEW (AAR) • TRAINEE EVALUATION</span>
+          </div>
+          <h3 class="text-lg font-bold text-slate-100" id="debrief-scenario-title">Mission Debrief: Simulation Complete</h3>
+          <div class="text-xs font-mono text-slate-400" id="debrief-timestamp">Recorded: 17:40:00</div>
+        </div>
+        <div id="debrief-grade-badge" class="px-3.5 py-1.5 rounded-lg text-sm font-bold font-mono uppercase bg-emerald-950 text-emerald-300 border border-emerald-500/50">
+          A+ (Distinction)
+        </div>
+      </div>
+
+      <!-- Performance Scorecard -->
+      <div class="grid grid-cols-2 sm:grid-cols-4 gap-3 bg-slate-900/90 p-3.5 rounded-lg border border-slate-800 font-mono text-xs">
+        <div>
+          <div class="text-slate-500">Overall Score</div>
+          <div id="debrief-score" class="text-lg font-bold text-emerald-400 mt-0.5">94 / 100</div>
+        </div>
+        <div>
+          <div class="text-slate-500">Decision Latency</div>
+          <div id="debrief-latency" class="text-lg font-bold text-cyan-400 mt-0.5">8.4s</div>
+        </div>
+        <div>
+          <div class="text-slate-500">Actions Dispatched</div>
+          <div id="debrief-actions-count" class="text-lg font-bold text-slate-200 mt-0.5">3 Actions</div>
+        </div>
+        <div>
+          <div class="text-slate-500">Trainee Rank</div>
+          <div id="debrief-rank" class="text-sm font-bold text-amber-400 mt-1">Defense Operator</div>
+        </div>
+      </div>
+
+      <!-- Strengths and Areas of Improvement -->
+      <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 text-xs">
+        <div class="p-3 rounded-lg bg-emerald-950/20 border border-emerald-800/50 space-y-1.5">
+          <div class="text-emerald-400 font-mono font-bold flex items-center space-x-1.5">
+            <svg class="w-4 h-4 text-emerald-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
+            </svg>
+            <span>Observed Strengths</span>
+          </div>
+          <ul id="debrief-strengths" class="space-y-1 text-slate-300 list-disc list-inside">
+            <!-- Rendered by AI Evaluator -->
+          </ul>
+        </div>
+
+        <div class="p-3 rounded-lg bg-amber-950/20 border border-amber-800/50 space-y-1.5">
+          <div class="text-amber-400 font-mono font-bold flex items-center space-x-1.5">
+            <svg class="w-4 h-4 text-amber-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"></path>
+            </svg>
+            <span>Targeted Coaching</span>
+          </div>
+          <ul id="debrief-improvements" class="space-y-1 text-slate-300 list-disc list-inside">
+            <!-- Rendered by AI Evaluator -->
+          </ul>
+        </div>
+      </div>
+
+      <!-- AI Instructor Narrative Summary -->
+      <div>
+        <div class="text-xs font-mono text-slate-400 uppercase tracking-wider mb-1 flex items-center justify-between">
+          <span>AI Instructor Dossier & Feedback</span>
+          <span class="text-[10px] text-cyan-400 font-mono">Module 8 Evaluator</span>
+        </div>
+        <div id="debrief-narrative" class="text-xs text-slate-300 bg-slate-900/60 p-3.5 rounded border border-slate-800 leading-relaxed whitespace-pre-line font-sans">
+          <!-- Populated by AI Evaluator -->
+        </div>
+      </div>
+
+      <!-- Actions Footer -->
+      <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3 pt-3 border-t border-slate-800">
+        <button onclick="window.launchRemediationDrill()" class="px-4 py-2 rounded bg-cyan-950 hover:bg-cyan-900 text-cyan-300 border border-cyan-800 text-xs font-mono font-semibold transition flex items-center space-x-1.5">
+          <span class="w-2 h-2 rounded-full bg-cyan-400"></span>
+          <span>Train Next Adaptive Drill &rarr;</span>
+        </button>
+
+        <button onclick="window.closeAIDebriefModal()" class="px-4 py-2 rounded bg-slate-800 hover:bg-slate-700 text-slate-300 text-xs font-mono font-medium transition">
+          Close Debrief
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- =========================================================================
+       MODAL: AI SETTINGS & CONFIGURATION
+       ========================================================================= -->
+  <div id="ai-settings-modal" class="fixed inset-0 z-50 hidden items-center justify-center bg-black/80 backdrop-blur-sm p-4">
+    <div class="tactical-card max-w-lg w-full p-6 border-cyan-500/40 shadow-2xl space-y-4">
+      <div class="flex items-center justify-between border-b border-slate-800 pb-3">
+        <div class="flex items-center space-x-2">
+          <svg class="w-5 h-5 text-cyan-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z"></path>
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path>
+          </svg>
+          <h3 class="text-base font-bold text-slate-100">AI Intelligence & Trainee Profile</h3>
+        </div>
+        <button onclick="window.closeAISettingsModal()" class="text-slate-400 hover:text-white">
+          <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
+          </svg>
+        </button>
+      </div>
+
+      <div class="space-y-3.5 text-xs font-mono">
+        <!-- Live AI Toggle -->
+        <div class="p-3 rounded-lg bg-slate-900 border border-slate-800 space-y-2">
+          <div class="flex items-center justify-between">
+            <span class="text-slate-300 font-bold">Google Gemini API Acceleration (Optional)</span>
+            <span id="ai-settings-live-badge" class="px-2 py-0.5 rounded text-[10px] font-bold bg-slate-800 text-slate-400">Offline Intelligence Active</span>
+          </div>
+          <p class="text-[11px] text-slate-400 leading-relaxed font-sans">
+            The trainer works 100% offline out-of-the-box. Supplying an optional Gemini API key unlocks dynamic generative scenario writing, conversational coaching, and customized post-mission debriefs.
+          </p>
+          <div>
+            <label class="block text-slate-400 mb-1">Gemini API Key</label>
+            <input type="password" id="ai-settings-api-key" placeholder="AIzaSy..." class="w-full bg-slate-950 border border-slate-700 rounded p-2 text-slate-200 focus:outline-none focus:border-cyan-400 font-mono">
+          </div>
+          <div>
+            <label class="block text-slate-400 mb-1">Model Selection</label>
+            <select id="ai-settings-model" class="w-full bg-slate-950 border border-slate-700 rounded p-2 text-slate-200 focus:outline-none focus:border-cyan-400 font-mono">
+              <option value="gemini-1.5-flash">Gemini 1.5 Flash (Fast & Low Latency)</option>
+              <option value="gemini-2.0-flash">Gemini 2.0 Flash</option>
+            </select>
+          </div>
+        </div>
+
+        <!-- Trainee Profile Overview -->
+        <div class="p-3 rounded-lg bg-slate-900 border border-slate-800 space-y-1.5">
+          <div class="text-slate-300 font-bold">Adaptive Profile (Module 9)</div>
+          <div class="grid grid-cols-3 gap-2 pt-1 text-[11px]">
+            <div>
+              <div class="text-slate-500">Rank</div>
+              <div id="settings-trainee-rank" class="text-amber-400 font-bold">Operator</div>
+            </div>
+            <div>
+              <div class="text-slate-500">Completed</div>
+              <div id="settings-trainee-sims" class="text-slate-200 font-bold">5 Missions</div>
+            </div>
+            <div>
+              <div class="text-slate-500">Avg Score</div>
+              <div id="settings-trainee-avg" class="text-emerald-400 font-bold">82%</div>
+            </div>
+          </div>
+        </div>
+
+        <div class="flex items-center justify-end space-x-2 pt-2 border-t border-slate-800">
+          <button type="button" onclick="window.closeAISettingsModal()" class="px-4 py-2 rounded bg-slate-800 hover:bg-slate-700 text-slate-300 font-medium transition">
+            Close
+          </button>
+          <button type="button" onclick="window.saveAISettings()" class="px-4 py-2 rounded bg-cyan-500 hover:bg-cyan-400 text-slate-950 font-bold transition">
+            Save Settings
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- =========================================================================
+       AEROSHIELD AI MENTOR FLOATING CHATBOT DRAWER (Module 6)
+       ========================================================================= -->
+  <div id="ai-mentor-drawer" class="ai-drawer fixed top-0 right-0 z-50 w-full sm:w-96 h-full bg-[#0a1120] border-l border-cyan-500/40 shadow-2xl flex flex-col justify-between">
+    <!-- Drawer Header -->
+    <div class="p-4 border-b border-slate-800 bg-[#0b1426] flex items-center justify-between">
+      <div class="flex items-center space-x-2.5">
+        <div class="w-8 h-8 rounded-lg bg-cyan-950 border border-cyan-500/50 flex items-center justify-center text-cyan-400">
+          <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 10h.01M12 10h.01M16 10h.01M9 16H5a2 2 0 01-2-2V6a2 2 0 012-2h14a2 2 0 012 2v8a2 2 0 01-2 2h-5l-5 5v-5z"></path>
+          </svg>
+        </div>
+        <div>
+          <div class="text-xs font-bold text-slate-100 flex items-center space-x-1.5">
+            <span>AeroShield AI Mentor</span>
+            <span class="w-2 h-2 rounded-full bg-cyan-400 animate-pulse"></span>
+          </div>
+          <div id="mentor-engine-badge" class="text-[10px] text-cyan-400 font-mono">Aerospace Training AI</div>
+        </div>
+      </div>
+      <button onclick="window.toggleAIMentor()" class="text-slate-400 hover:text-white p-1">
+        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
+        </svg>
+      </button>
+    </div>
+
+    <!-- Quick Prompts Row -->
+    <div class="px-3 py-2 bg-slate-900/60 border-b border-slate-800/80 flex items-center space-x-1.5 overflow-x-auto text-[11px] font-mono text-cyan-300">
+      <button onclick="window.sendMentorPrompt('What should I do right now?')" class="px-2 py-1 rounded bg-slate-800 hover:bg-slate-700 border border-slate-700 whitespace-nowrap">
+        What should I do?
+      </button>
+      <button onclick="window.sendMentorPrompt('Why is this drone high risk?')" class="px-2 py-1 rounded bg-slate-800 hover:bg-slate-700 border border-slate-700 whitespace-nowrap">
+        Explain threat?
+      </button>
+      <button onclick="window.sendMentorPrompt('Quiz me on aerospace defense')" class="px-2 py-1 rounded bg-slate-800 hover:bg-slate-700 border border-slate-700 whitespace-nowrap">
+        Quiz Me
+      </button>
+      <button onclick="window.sendMentorPrompt('Explain FAA Remote ID')" class="px-2 py-1 rounded bg-slate-800 hover:bg-slate-700 border border-slate-700 whitespace-nowrap">
+        Remote ID?
+      </button>
+    </div>
+
+    <!-- Chat Message History Feed -->
+    <div id="mentor-chat-messages" class="flex-1 p-4 overflow-y-auto space-y-3 font-sans text-xs">
+      <div class="chat-msg-assistant p-3 text-slate-300 leading-relaxed">
+        👋 <strong>Welcome, Operator.</strong> I am your <strong>AeroShield AI Training Mentor</strong>. I monitor the live simulation radar, explain drone telemetry, evaluate regulations (FAA Part 89 Remote ID / ICAO), and guide safe non-kinetic defense actions. How can I assist?
+      </div>
+    </div>
+
+    <!-- Chat Input Box -->
+    <div class="p-3 border-t border-slate-800 bg-[#0b1426]">
+      <form id="mentor-chat-form" class="flex items-center space-x-2">
+        <input type="text" id="mentor-chat-input" placeholder="Ask mentor about radar tracks, safety rules, or quiz..." class="flex-1 bg-slate-900 border border-slate-700 rounded-lg px-3 py-2 text-xs text-slate-200 focus:outline-none focus:border-cyan-400">
+        <button type="submit" class="px-3 py-2 rounded-lg bg-cyan-500 hover:bg-cyan-400 text-slate-950 font-bold transition flex items-center justify-center">
+          <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 19l9 2-9-18-9 18 9-2zm0 0v-8"></path>
+          </svg>
+        </button>
+      </form>
+    </div>
+  </div>
+
+  <!-- FLOATING AI MENTOR FAB BUTTON -->
+  <button id="ai-mentor-fab-btn" onclick="window.toggleAIMentor()" class="ai-mentor-fab fixed bottom-6 right-6 z-40 w-12 h-12 rounded-full bg-gradient-to-br from-cyan-500 to-sky-600 text-slate-950 flex items-center justify-center shadow-xl cursor-pointer" title="Chat with AeroShield AI Mentor">
+    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 10h.01M12 10h.01M16 10h.01M9 16H5a2 2 0 01-2-2V6a2 2 0 012-2h14a2 2 0 012 2v8a2 2 0 01-2 2h-5l-5 5v-5z"></path>
+    </svg>
+  </button>
+
+  <!-- =========================================================================
+       FOOTER
+       ========================================================================= -->
+  <footer class="border-t border-slate-800/80 bg-[#070b16] py-6 mt-12 text-xs font-mono text-slate-500">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex flex-col sm:flex-row items-center justify-between gap-4">
+      <div class="flex items-center space-x-2">
+        <span class="w-2 h-2 rounded-full bg-emerald-400"></span>
+        <span class="text-slate-400">AI-Enabled Drone & Counter-Drone Threat Simulation Trainer</span>
+      </div>
+      <div class="text-center sm:text-right">
+        Safe Educational Platform • 100% Client-Side • GitHub Pages Compatible
+      </div>
+    </div>
+  </footer>
+
+  <!-- Scripts in dependency order -->
+  <script src="js/audio.js"></script>
+  <script src="js/scenarios.js"></script>
+  <script src="js/ai-service.js"></script>
+  <script src="js/ai-predictor.js"></script>
+  <script src="js/ai-scenario-generator.js"></script>
+  <script src="js/ai-assistant.js"></script>
+  <script src="js/ai-evaluator.js"></script>
+  <script src="js/ai-adaptive.js"></script>
+  <script src="js/ai-engine.js"></script>
+  <script src="js/radar.js"></script>
+  <script src="js/reports.js"></script>
+  <script src="js/app.js"></script>
+
+</body>
+</html>

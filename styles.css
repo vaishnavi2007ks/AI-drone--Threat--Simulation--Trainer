@@ -1,0 +1,375 @@
+/* ==========================================================================
+   AI-Enabled Drone & Counter-Drone Threat Simulation Trainer
+   Cyber-Defense & Tactical Aerospace Theme Styles
+   ========================================================================== */
+
+:root {
+  --bg-primary: #080d1a;
+  --bg-secondary: #0f172a;
+  --bg-card: #131d31;
+  --bg-card-hover: #17243c;
+  --border-subtle: #1e293b;
+  --border-active: #38bdf8;
+  --border-danger: #ef4444;
+  --border-warning: #f59e0b;
+  --border-success: #10b981;
+
+  --accent-cyan: #06b6d4;
+  --accent-sky: #38bdf8;
+  --accent-emerald: #10b981;
+  --accent-amber: #f59e0b;
+  --accent-rose: #f43f5e;
+  --accent-crimson: #ef4444;
+  --accent-indigo: #6366f1;
+
+  --text-primary: #f8fafc;
+  --text-secondary: #94a3b8;
+  --text-muted: #64748b;
+  --text-cyan: #38bdf8;
+
+  --radar-green: #22c55e;
+  --radar-glow: rgba(34, 197, 94, 0.4);
+}
+
+/* Base and Typography */
+body {
+  font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+  background-color: var(--bg-primary);
+  color: var(--text-primary);
+  overflow-x: hidden;
+  min-height: 100vh;
+}
+
+.font-mono {
+  font-family: 'JetBrains Mono', 'Fira Code', 'Roboto Mono', monospace;
+}
+
+/* Tactical Background Grid Pattern */
+.cyber-grid-bg {
+  background-image: 
+    linear-gradient(to right, rgba(56, 189, 248, 0.04) 1px, transparent 1px),
+    linear-gradient(to bottom, rgba(56, 189, 248, 0.04) 1px, transparent 1px);
+  background-size: 32px 32px;
+}
+
+.radar-pattern-bg {
+  background-image: radial-gradient(rgba(14, 165, 233, 0.12) 1px, transparent 1px);
+  background-size: 20px 20px;
+}
+
+/* Glassmorphism Card */
+.tactical-card {
+  background: rgba(19, 29, 49, 0.85);
+  backdrop-filter: blur(12px);
+  border: 1px solid rgba(56, 189, 248, 0.15);
+  border-radius: 0.75rem;
+  transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.tactical-card:hover {
+  border-color: rgba(56, 189, 248, 0.35);
+  box-shadow: 0 8px 24px -6px rgba(14, 165, 233, 0.15);
+}
+
+.tactical-card-active {
+  border-color: rgba(56, 189, 248, 0.7);
+  box-shadow: 0 0 20px rgba(56, 189, 248, 0.2);
+}
+
+/* Glowing Border Utilities */
+.glow-cyan {
+  box-shadow: 0 0 15px rgba(6, 182, 212, 0.3);
+}
+
+.glow-red {
+  box-shadow: 0 0 15px rgba(239, 68, 68, 0.35);
+}
+
+.glow-amber {
+  box-shadow: 0 0 15px rgba(245, 158, 11, 0.3);
+}
+
+.glow-emerald {
+  box-shadow: 0 0 15px rgba(16, 185, 129, 0.3);
+}
+
+/* Radar Display Styling */
+.radar-container {
+  position: relative;
+  border-radius: 50%;
+  overflow: hidden;
+  box-shadow: inset 0 0 40px rgba(6, 182, 212, 0.15), 0 0 30px rgba(6, 182, 212, 0.1);
+  border: 2px solid rgba(56, 189, 248, 0.3);
+}
+
+.radar-sweep-beam {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 50%;
+  height: 50%;
+  transform-origin: top left;
+  background: conic-gradient(from 0deg, rgba(6, 182, 212, 0.4) 0deg, rgba(6, 182, 212, 0.1) 40deg, transparent 60deg);
+  pointer-events: none;
+}
+
+/* Animations */
+@keyframes radar-pulse {
+  0% {
+    transform: scale(0.95);
+    opacity: 0.8;
+  }
+  50% {
+    transform: scale(1.05);
+    opacity: 0.3;
+  }
+  100% {
+    transform: scale(0.95);
+    opacity: 0.8;
+  }
+}
+
+.animate-radar-pulse {
+  animation: radar-pulse 3s infinite ease-in-out;
+}
+
+@keyframes ping-slow {
+  0% {
+    transform: scale(1);
+    opacity: 1;
+  }
+  100% {
+    transform: scale(2.4);
+    opacity: 0;
+  }
+}
+
+.animate-ping-slow {
+  animation: ping-slow 2s cubic-bezier(0, 0, 0.2, 1) infinite;
+}
+
+@keyframes scanline {
+  0% {
+    transform: translateY(-100%);
+  }
+  100% {
+    transform: translateY(1000%);
+  }
+}
+
+.scanline-overlay {
+  position: relative;
+  overflow: hidden;
+}
+
+.scanline-overlay::after {
+  content: " ";
+  display: block;
+  position: absolute;
+  top: 0; left: 0; bottom: 0; right: 0;
+  background: linear-gradient(rgba(18, 16, 16, 0) 50%, rgba(0, 0, 0, 0.25) 50%), linear-gradient(90deg, rgba(255, 0, 0, 0.03), rgba(0, 255, 0, 0.01), rgba(0, 0, 255, 0.03));
+  z-index: 5;
+  background-size: 100% 3px, 6px 100%;
+  pointer-events: none;
+  opacity: 0.6;
+}
+
+/* Custom Scrollbar */
+::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+
+::-webkit-scrollbar-track {
+  background: #0b1324;
+}
+
+::-webkit-scrollbar-thumb {
+  background: #1e293b;
+  border-radius: 3px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: #38bdf8;
+}
+
+/* Threat Status Badges */
+.badge-critical {
+  background: rgba(239, 68, 68, 0.15);
+  color: #f87171;
+  border: 1px solid rgba(239, 68, 68, 0.35);
+}
+
+.badge-high {
+  background: rgba(249, 115, 22, 0.15);
+  color: #fb923c;
+  border: 1px solid rgba(249, 115, 22, 0.35);
+}
+
+.badge-moderate {
+  background: rgba(245, 158, 11, 0.15);
+  color: #fbbf24;
+  border: 1px solid rgba(245, 158, 11, 0.35);
+}
+
+.badge-low {
+  background: rgba(16, 185, 129, 0.15);
+  color: #34d399;
+  border: 1px solid rgba(16, 185, 129, 0.35);
+}
+
+/* Navigation active indicator */
+.nav-link {
+  position: relative;
+  transition: all 0.2s ease;
+}
+
+.nav-link.active {
+  color: #38bdf8;
+}
+
+.nav-link.active::after {
+  content: '';
+  position: absolute;
+  bottom: -4px;
+  left: 0;
+  width: 100%;
+  height: 2px;
+  background: #38bdf8;
+  box-shadow: 0 0 8px #38bdf8;
+}
+
+/* Sliders and Range Inputs */
+input[type="range"] {
+  accent-color: #38bdf8;
+}
+
+/* Tab Switching Transitions */
+.tab-pane {
+  display: none;
+  opacity: 0;
+  transition: opacity 0.25s ease-in-out;
+}
+
+.tab-pane.active {
+  display: block;
+  opacity: 1;
+}
+
+/* Gauge styling */
+.risk-gauge-circle {
+  transition: stroke-dashoffset 0.8s ease-in-out, stroke 0.4s ease;
+}
+
+/* Event Log Feed items */
+.log-item {
+  border-left: 2px solid #334155;
+  transition: all 0.15s ease;
+}
+
+.log-item:hover {
+  background-color: rgba(30, 41, 59, 0.5);
+  border-left-color: #38bdf8;
+}
+
+.log-item.critical {
+  border-left-color: #ef4444;
+}
+
+.log-item.warning {
+  border-left-color: #f59e0b;
+}
+
+.log-item.info {
+  border-left-color: #38bdf8;
+}
+
+.log-item.success {
+  border-left-color: #10b981;
+}
+
+/* ==========================================================================
+   AI Training & Chatbot Assistant UI Styles (Modules 1 - 10)
+   ========================================================================== */
+
+/* AI Mentor Drawer Animation */
+.ai-drawer {
+  transition: transform 0.35s cubic-bezier(0.16, 1, 0.3, 1), opacity 0.25s ease;
+  transform: translateX(100%);
+  opacity: 0;
+  pointer-events: none;
+}
+
+.ai-drawer.open {
+  transform: translateX(0);
+  opacity: 1;
+  pointer-events: auto;
+}
+
+/* Floating AI Mentor Pulse Button */
+.ai-mentor-fab {
+  box-shadow: 0 0 20px rgba(6, 182, 212, 0.35), 0 4px 12px rgba(0, 0, 0, 0.5);
+  transition: all 0.25s ease;
+}
+
+.ai-mentor-fab:hover {
+  transform: scale(1.06);
+  box-shadow: 0 0 28px rgba(6, 182, 212, 0.6), 0 6px 16px rgba(0, 0, 0, 0.6);
+}
+
+/* Chat Message Bubbles */
+.chat-msg-user {
+  background: rgba(30, 41, 59, 0.9);
+  border: 1px solid rgba(56, 189, 248, 0.25);
+  border-radius: 0.75rem 0.75rem 0.15rem 0.75rem;
+}
+
+.chat-msg-assistant {
+  background: rgba(11, 19, 36, 0.95);
+  border: 1px solid rgba(6, 182, 212, 0.3);
+  border-radius: 0.75rem 0.75rem 0.75rem 0.15rem;
+}
+
+/* Trainee Defense Action Buttons */
+.trainee-action-btn {
+  transition: all 0.15s ease;
+  position: relative;
+  overflow: hidden;
+}
+
+.trainee-action-btn:hover {
+  transform: translateY(-1px);
+}
+
+.trainee-action-btn:active {
+  transform: translateY(1px);
+}
+
+.trainee-action-btn.dispatched {
+  border-color: #10b981 !important;
+  background-color: rgba(16, 185, 129, 0.15) !important;
+  color: #34d399 !important;
+}
+
+/* Print Styles for college reports */
+@media print {
+  body {
+    background: #ffffff !important;
+    color: #000000 !important;
+  }
+
+  header, nav, footer, #live-sim-controls, .no-print {
+    display: none !important;
+  }
+
+  .print-only {
+    display: block !important;
+  }
+
+  .tactical-card {
+    background: #ffffff !important;
+    border: 1px solid #ccc !important;
+    color: #000 !important;
+    box-shadow: none !important;
+  }
+}
